@@ -20,6 +20,7 @@
 class GenericSensor
 {
 public:
+
     // Constructor; Provide sensor address
     GenericSensor(uint8_t addr);
 
