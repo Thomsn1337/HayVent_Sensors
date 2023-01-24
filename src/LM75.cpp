@@ -46,8 +46,10 @@ LM75::Faults Fault = {
 };
 
 // Constructor interited from parent
-LM75::LM75(uint8_t addr) : GenericSensor(addr)
+LM75::LM75(uint8_t addr)
 {
+    address = addr;
+    Wire.begin();
 }
 
 // Reads temperature register (in °C)
@@ -112,4 +114,51 @@ uint8_t LM75::getConfigReg()
 void LM75::setConfigReg(uint8_t config)
 {
     write8Bit(Register.Configuration, config);
+}
+
+// Reads an 8-Bit register from the sensor
+uint8_t LM75::read8Bit(uint8_t reg)
+{
+    Wire.beginTransmission(address);
+    Wire.write(reg); // Set the register pointer
+    Wire.endTransmission();
+
+    Wire.requestFrom(address, 1); // Request 1 Byte from the register
+    uint8_t data = Wire.read();   // Read the Byte
+    Wire.endTransmission();
+    return data;
+}
+
+// Reads a 16-Bit register from the sensor
+uint16_t LM75::read16Bit(uint8_t reg)
+{
+    Wire.beginTransmission(address);
+    Wire.write(reg); // Set the register pointer
+    Wire.endTransmission();
+
+    Wire.requestFrom(address, 2); // Request 2 Bytes
+    // Set the high Byte and the low Byte together
+    uint16_t data = Wire.read() << 8;
+    data |= Wire.read();
+    Wire.endTransmission();
+    return data;
+}
+
+// Writes to a 8-Bit register
+void LM75::write8Bit(uint8_t reg, uint8_t data)
+{
+    Wire.beginTransmission(address);
+    Wire.write(reg);  // Set register pointer
+    Wire.write(data); // Write date to register
+    Wire.endTransmission();
+}
+
+// Writes to a 16-Bit register
+void LM75::write16Bit(uint8_t reg, uint16_t data)
+{
+    Wire.beginTransmission(address);
+    Wire.write(reg);            // Set register pointer
+    Wire.write(highByte(data)); // Write high Byte to register
+    Wire.write(lowByte(data));  // Write low Byte to register
+    Wire.endTransmission();
 }

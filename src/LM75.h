@@ -16,9 +16,10 @@
 
 #define LM75_DEFAULT_ADDRESS 0x48
 
-#include "GenericSensor.h"
+#include <Arduino.h>
+#include <Wire.h>
 
-class LM75 : protected GenericSensor
+class LM75
 {
 public:
     // Register structure
@@ -70,11 +71,12 @@ protected:
     uint8_t getConfigReg();            // Reads configuration register
     void setConfigReg(uint8_t config); // Sets configuration register
 
-    // Inherited from GenericSensor library
-    using GenericSensor::read16Bit;
-    using GenericSensor::read8Bit;
-    using GenericSensor::write16Bit;
-    using GenericSensor::write8Bit;
+    void write8Bit(uint8_t reg, uint8_t data);   // Write to 8-Bit register
+    void write16Bit(uint8_t reg, uint16_t data); // Write to 16-Bit register
+    uint8_t read8Bit(uint8_t reg);               // Read from 8-Bit register
+    uint16_t read16Bit(uint8_t reg);             // Read from 16-Bit register
+
+    uint8_t address; // Address of the sensor
 };
 
 // Make these structures available globally
